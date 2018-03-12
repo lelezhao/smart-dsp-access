@@ -1,0 +1,12 @@
+.DS_Store
+.classpath
+.project
+target
+.idea
+*.iml
+logs
+log
+src/main/java/META-INF/factory.xml
+src/test/resources/factory.xml
+src/main/resources/META-INF/persistence.xml
+/src/main/resources/application-local.properties
