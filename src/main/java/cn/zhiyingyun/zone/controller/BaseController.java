@@ -142,7 +142,7 @@ public abstract class BaseController {
       Method writeMethod = targetPd.getWriteMethod();
       try {
         switch (targetPd.getName()) {
-          case "registrationTime":
+          case "createTime":
             writeMethod.invoke(object, DateUtils.currentTimestamp());
             break;
           case "updateTime":

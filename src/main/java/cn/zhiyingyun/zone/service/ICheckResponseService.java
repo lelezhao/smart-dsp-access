@@ -7,9 +7,9 @@ public interface ICheckResponseService {
 
   void bannerAdCheck(UpPlatResponse respons);
 
-  void nativeAdCheck();
+  void nativeAdCheck(UpPlatResponse response);
 
-  void videoAdCheck();
+  void videoAdCheck(UpPlatResponse response);
 
-  void winNoticeCheck();
+  void winNoticeCheck(UpPlatResponse response);
 }

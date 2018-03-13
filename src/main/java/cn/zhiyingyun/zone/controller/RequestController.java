@@ -1,11 +1,13 @@
 package cn.zhiyingyun.zone.controller;
 
 import cn.zhiyingyun.zone.common.JsonResult;
+import cn.zhiyingyun.zone.domain.DspBidHistory;
 import cn.zhiyingyun.zone.domain.DspUser;
 import cn.zhiyingyun.zone.dto.RequstBuildDto;
 import cn.zhiyingyun.zone.entity.UpPlatRequest;
 import cn.zhiyingyun.zone.entity.UpPlatResponse;
 import cn.zhiyingyun.zone.service.IBuildRequestService;
+import cn.zhiyingyun.zone.service.IDspBidHistoryService;
 import cn.zhiyingyun.zone.service.IUserService;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.StringUtils;
@@ -29,9 +31,10 @@ public class RequestController extends BaseController {
 
   @Autowired
   IBuildRequestService buildRequestService;
-
   @Autowired
   IUserService userService;
+  @Autowired
+  IDspBidHistoryService dspBidHistoryService;
 
   StringHttpMessageConverter stringHttpMessageConverter = new StringHttpMessageConverter(Charset.forName("UTF-8"));
 
@@ -82,6 +85,19 @@ public class RequestController extends BaseController {
     HttpEntity<String> requstEntity = new HttpEntity<>(JSONObject.toJSONString(upPlatRequest), httpHeaders);
 
     ResponseEntity<String> responseEntity = restTemplate.exchange(requestUrl, HttpMethod.POST, requstEntity, String.class);
+
+
+    DspBidHistory bidHistory = new DspBidHistory();
+    createResourceInit(bidHistory);
+    bidHistory.setRequestUrl(requestUrl);
+    bidHistory.setRequestBody(JSONObject.toJSONString(upPlatRequest));
+    bidHistory.setUserId(getUserId());
+    bidHistory.setSellType("RTB");
+    bidHistory.setBidid(upPlatRequest.id);
+    bidHistory.setResponseCode(String.valueOf(responseEntity.getStatusCode().value()));
+    bidHistory.setResponseBody(responseEntity.getBody());
+
+    dspBidHistoryService.save(bidHistory);
 
     if (StringUtils.isBlank(responseEntity.getBody())) {
       return renderError("竞价响应内容为空！");

@@ -17,6 +17,8 @@ public class CheckResponseServiceImpl implements ICheckResponseService {
 
   private static final Logger logger = LoggerFactory.getLogger(CheckResponseServiceImpl.class);
 
+  private static final String PRICE_MACRO = "${AUCTION_PRICE}";
+
   @Override
   public void commonCheck(UpPlatResponse response) {
 
@@ -104,20 +106,72 @@ controlHtmlSnippetType[4,8]不做监控校验
         }
       }
     }
+
+    String title = banner.title;
+    String desc = banner.desc;
+    String image = banner.image_url;
+    String landing = banner.landing;
+    String deeplink = banner.deep_link;
+    List<String> impress = banner.impress;
+    List<String> click = banner.click;
+
+    if (StringUtils.isBlank(landing)) {
+      logger.debug("landing为空,sid={}");
+    }
+
+    // 展示监控不为空，且至少有一个要包含${AUCTION_PRICE}
+    if (impress == null || impress.size() == 0) {
+      logger.debug("曝光监控impress为空,sid={}");
+    }
+    // 点击监控不为空
+    if (click == null || click.size() == 0) {
+      logger.debug("点击监控click为空,sid={}");
+    }
+
+    if (mtype == AdxEnums.MType.PLAIN_TEXT) {
+      if (1 != AdxEnums.AdConstants.ADUNIT_TYPE_ID_BANNER) {
+        logger.debug("目前只有横幅支持文字链,sid={}");
+      }
+      if (StringUtils.isBlank(title)) {
+        logger.debug("title为空,sid={}");
+      }
+    } else if (mtype == AdxEnums.MType.PLAIN_IMAGE) {
+      if (StringUtils.isBlank(image)) {
+        logger.debug("image url为空,sid={}");
+      }
+    } else if (mtype == AdxEnums.MType.IMAGE_TEXT) {
+      if (2 == AdxEnums.AdConstants.ADUNIT_TYPE_ID_FULL) {
+        logger.debug("全屏暂不支持图文素材,sid={}");
+      }
+
+      if (StringUtils.isBlank(title)) {
+        logger.debug("title为空,sid={}");
+      }
+
+      if (StringUtils.isBlank(image)) {
+        logger.debug("image url为空,sid={}");
+      }
+    } else {
+      logger.debug("不支持的mtype = {},sid={}", mtype);
+    }
   }
 
   @Override
-  public void nativeAdCheck() {
+  public void nativeAdCheck(UpPlatResponse response) {
 
+    UpPlatResponse.SeatBid.Bid bid = response.seatbid.get(0).bid.get(0);
+
+    UpPlatResponse.SeatBid.Bid.NativeAd nativeAd = bid.native_ad;
+    if (nativeAd == null) {
+      logger.debug("native_ad为空,sid={}");
+    }
   }
 
   @Override
-  public void videoAdCheck() {
-
+  public void videoAdCheck(UpPlatResponse response) {
   }
 
   @Override
-  public void winNoticeCheck() {
-
+  public void winNoticeCheck(UpPlatResponse response) {
   }
 }

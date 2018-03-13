@@ -9,9 +9,9 @@
         </encoder>
     </appender>
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>./log/smartzone-service.log</file>
+        <file>./log/smart-dsp-access.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>./logs/%d{yyyy-MM-dd}-smartzone-service.log</fileNamePattern>
+            <fileNamePattern>./logs/%d{yyyy-MM-dd}-smart-dsp-access.log</fileNamePattern>
             <maxHistory>30</maxHistory>
         </rollingPolicy>
         <encoder>
