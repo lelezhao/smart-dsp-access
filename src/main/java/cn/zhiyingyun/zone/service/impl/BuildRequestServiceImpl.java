@@ -11,11 +11,10 @@ import java.util.UUID;
 
 @Service
 public class BuildRequestServiceImpl implements IBuildRequestService {
-  public UpPlatRequest.Impression buildBannerImp(boolean isSupportDeepLink, boolean isSupportDownload, boolean isSecure) {
-    UpPlatRequest.Impression impression = new UpPlatRequest.Impression();
+
+  private UpPlatRequest.Impression buildCommonImp(UpPlatRequest.Impression impression, boolean isSupportDeepLink, boolean isSupportDownload, boolean isSecure) {
     impression.id = UUID.randomUUID().toString();
-    impression.tagid = "58349F1F392F79EE10715232FB249531";
-    impression.instl = 1;
+
     impression.bidfloor = 0.01;
     if (isSupportDeepLink) {
       impression.is_support_deeplink = 1;
@@ -35,6 +34,17 @@ public class BuildRequestServiceImpl implements IBuildRequestService {
       impression.secure = 0;
     }
 
+    return impression;
+  }
+
+  public UpPlatRequest.Impression buildBannerImp(boolean isSupportDeepLink, boolean isSupportDownload, boolean isSecure) {
+    UpPlatRequest.Impression impression = new UpPlatRequest.Impression();
+
+    impression.tagid = "58349F1F392F79EE10715232FB249531";
+    impression.instl = 1;
+
+    buildCommonImp(impression, isSupportDeepLink, isSupportDownload, isSecure);
+
     UpPlatRequest.Impression.Banner banner = new UpPlatRequest.Impression.Banner();
     banner.w = 640;
     banner.h = 100;
@@ -47,44 +57,49 @@ public class BuildRequestServiceImpl implements IBuildRequestService {
   }
 
   public UpPlatRequest.Impression buildNativeImp(boolean isSupportDeepLink, boolean isSupportDownload, boolean isSecure) {
-    String json = "{\n" +
-            "\"id\": \"4fd216e0-baf9-483e-9c88-43e8421b9292\",\n" +
-            "\"tagid\": \"XXXXXXXXXXXXXXXXXXX\",\n" +
-            "\"native\": {\n" +
-            "\"title\": {\n" +
-            "\"len\": 30\n" +
-            "},\n" +
-            "\"img\": {\n" +
-            "\"w\": 640,\n" +
-            "\"h\": 960\n" +
-            "}\n" +
-            "},\n" +
-            "\"instl\": 7,\n" +
-            "\"bidfloor\": 13.0,\n" +
-            "\"is_support_deeplink\": 1,\n" +
-            "\"secure\": 0,\n" +
-            "\"is_downloadable\": 1\n" +
-            "}";
 
-    return null;
+    UpPlatRequest.Impression impression = new UpPlatRequest.Impression();
+
+    impression.tagid = "58349F1F392F79EE10715232FB249531";
+    impression.instl = 1;
+
+    buildCommonImp(impression, isSupportDeepLink, isSupportDownload, isSecure);
+
+    UpPlatRequest.Impression.Native nativeAd = new UpPlatRequest.Impression.Native();
+
+    nativeAd.title = new UpPlatRequest.Impression.Native.Title();
+    nativeAd.title.len = 30;
+    nativeAd.img = new UpPlatRequest.Impression.Native.Img();
+    nativeAd.img.w = 640;
+    nativeAd.img.h = 960;
+    nativeAd.desc = new UpPlatRequest.Impression.Native.Desc();
+    nativeAd.desc.len = 30;
+
+    impression.native$ = nativeAd;
+
+    return impression;
   }
 
   public UpPlatRequest.Impression buildVideoImp(boolean isSupportDeepLink, boolean isSupportDownload, boolean isSecure) {
-    String josn = "{\n" +
-            "    \"id\":\"9f06a56f-2248-4834-978e-770bd5cc8ecd\",\n" +
-            "    \"instl\":2,\n" +
-            "    \"video\":{\n" +
-            "        \"protocol\":101,\n" +
-            "        \"w\":600,\n" +
-            "        \"h\":500,\n" +
-            "        \"minduration\":5000,\n" +
-            "        \"maxduration\":15000,\n" +
-            "        \"linearation\":1\n" +
-            "    },\n" +
-            "    \"bidfloor\":0.1\n" +
-            "}";
+    UpPlatRequest.Impression impression = new UpPlatRequest.Impression();
 
-    return null;
+    impression.tagid = "58349F1F392F79EE10715232FB249531";
+    impression.instl = 1;
+
+    buildCommonImp(impression, isSupportDeepLink, isSupportDownload, isSecure);
+
+    UpPlatRequest.Impression.Video video = new UpPlatRequest.Impression.Video();
+
+    video.w = 600;
+    video.h = 500;
+    video.protocol = 101;
+    video.minduration = 5000;
+    video.maxduration = 15000;
+    video.linearity = 1;
+
+    impression.video = video;
+
+    return impression;
   }
 
   public UpPlatRequest.Device buildDevice(String carrier, Integer connnectionType, String os) {
