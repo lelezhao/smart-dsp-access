@@ -8,8 +8,8 @@
     <packaging>jar</packaging>
     <version>0.0.1-SNAPSHOT</version>
 
-    <name>smartzone-service</name>
-    <description>智慧商家后台服务</description>
+    <name>smart-dsp-access</name>
+    <description>DSP自助接入服务</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>

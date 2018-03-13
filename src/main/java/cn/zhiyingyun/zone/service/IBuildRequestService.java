@@ -1,17 +1,19 @@
 package cn.zhiyingyun.zone.service;
 
+import cn.zhiyingyun.zone.entity.UpPlatRequest;
+
 public interface IBuildRequestService {
-  public void buildBannerImp(boolean isSupportDeepLink, boolean isDowmloadable, int secure);
+  UpPlatRequest.Impression buildBannerImp(boolean isSupportDeepLink, boolean isSupportDownload, int secure);
 
-  public void buildNativeImp(boolean isSupportDeepLink, boolean isDowmloadable, int secure);
+  UpPlatRequest.Impression buildNativeImp(boolean isSupportDeepLink, boolean isSupportDownload, int secure);
 
-  public void buildVideoImp(boolean isSupportDeepLink, boolean isDowmloadable, int secure);
+  UpPlatRequest.Impression buildVideoImp(boolean isSupportDeepLink, boolean isSupportDownload, int secure);
 
-  public void buildDevice(String carrier, Integer connnectionType, String os);
+  UpPlatRequest.Device buildDevice(String carrier, Integer connnectionType, String os);
 
-  public void buildApp();
+  UpPlatRequest.App buildApp();
 
-  public void buildPmp();
+  UpPlatRequest.Impression.Pmp buildPmp(String dealId, Double bidFloor);
 
-  public void buildUser();
+  UpPlatRequest.User buildUser();
 }

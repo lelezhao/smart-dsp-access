@@ -91,9 +91,7 @@ public class UpPlatRequest {
         public ImgExt ext;
 
         public static class ImgExt {
-        }
-
-        ;
+        };
       }
 
       public static class NativeExt {
@@ -171,7 +169,7 @@ public class UpPlatRequest {
     }
 
     public static class Pmp {
-      List<Deal> deals;
+      public List<Deal> deals;
       public Boolean monopolistic; // 标识此次请求的广告位是否为兜底广告位
 
       public static class Deal {

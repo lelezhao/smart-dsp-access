@@ -1,28 +1,52 @@
 package cn.zhiyingyun.zone.service.impl;
 
+import cn.zhiyingyun.zone.entity.UpPlatRequest;
 import cn.zhiyingyun.zone.service.IBuildRequestService;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
 @Service
 public class BuildRequestServiceImpl implements IBuildRequestService {
-  public void buildBannerImp(boolean isSupportDeepLink, boolean isDowmloadable, int secure) {
-    String json = "{\n" +
-            "    \"id\":\"20b453e6-7cb9-444c-9ae8-0f26f72f79f6\",\n" +
-            "    \"tagid\":\"XXXXXXXXXXXXXXXXXXXXXXXXX\",\n" +
-            "    \"banner\":{\n" +
-            "        \"type\":1,\n" +
-            "        \"w\":640,\n" +
-            "        \"h\":100\n" +
-            "    },\n" +
-            "    \"instl\":1,\n" +
-            "    \"bidfloor\":0.3,\n" +
-            "    \"is_support_deeplink\":0,\n" +
-            "    \"secure\":0,\n" +
-            "    \"is_downloadable\":1\n" +
-            "}";
+  public UpPlatRequest.Impression buildBannerImp(boolean isSupportDeepLink, boolean isSupportDownload, int secure) {
+    UpPlatRequest.Impression impression = new UpPlatRequest.Impression();
+    impression.id = UUID.randomUUID().toString();
+    impression.tagid = "XXXXXXXXXXXXXXXXXXXXXXXXX";
+    impression.instl = 1;
+    impression.bidfloor = 0.01;
+    if (isSupportDeepLink) {
+      impression.is_support_deeplink = 1;
+    } else {
+      impression.is_support_deeplink = 0;
+    }
+
+    if (isSupportDownload) {
+      impression.is_downloadable = 1;
+    } else {
+      impression.is_downloadable = 0;
+    }
+
+    if (secure == 1) {
+      impression.secure = 1;
+    } else {
+      impression.secure = 0;
+    }
+
+    UpPlatRequest.Impression.Banner banner = new UpPlatRequest.Impression.Banner();
+    banner.w = 640;
+    banner.h = 100;
+    banner.type = 1;
+    banner.matypes = Arrays.asList(1, 2);
+
+    impression.banner = banner;
+
+    return impression;
   }
 
-  public void buildNativeImp(boolean isSupportDeepLink, boolean isDowmloadable, int secure) {
+  public UpPlatRequest.Impression buildNativeImp(boolean isSupportDeepLink, boolean isSupportDownload, int secure) {
     String json = "{\n" +
             "\"id\": \"4fd216e0-baf9-483e-9c88-43e8421b9292\",\n" +
             "\"tagid\": \"XXXXXXXXXXXXXXXXXXX\",\n" +
@@ -41,9 +65,11 @@ public class BuildRequestServiceImpl implements IBuildRequestService {
             "\"secure\": 0,\n" +
             "\"is_downloadable\": 1\n" +
             "}";
+
+    return null;
   }
 
-  public void buildVideoImp(boolean isSupportDeepLink, boolean isDowmloadable, int secure) {
+  public UpPlatRequest.Impression buildVideoImp(boolean isSupportDeepLink, boolean isSupportDownload, int secure) {
     String josn = "{\n" +
             "    \"id\":\"9f06a56f-2248-4834-978e-770bd5cc8ecd\",\n" +
             "    \"instl\":2,\n" +
@@ -57,59 +83,71 @@ public class BuildRequestServiceImpl implements IBuildRequestService {
             "    },\n" +
             "    \"bidfloor\":0.1\n" +
             "}";
+
+    return null;
   }
 
-  public void buildDevice(String carrier, Integer connnectionType, String os) {
-    String json = "{\n" +
-            "    \"w\":1080,\n" +
-            "    \"h\":1776,\n" +
-            "    \"ua\":\"Mozilla/5.0 (Linux; Android 6.0.1; ATH-AL00 Build/HONORATH-AL00; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/55.0.2883.91 Mobile Safari/537.36\",\n" +
-            "    \"ip\":\"14.30.158.152\",\n" +
-            "    \"geo\":{\n" +
-            "        \"lat\":23.043595,\n" +
-            "        \"lon\":112.869539\n" +
-            "    },\n" +
-            "    \"did\":\"863546034395903\",\n" +
-            "    \"didmd5\":\"5656cc117aa7fdff17383d7ae66f1514\",\n" +
-            "    \"didsha1\":\"b889b1fff1c90838ef677bf7f1deeddac638a156\",\n" +
-            "    \"dpid\":\"7743974f06212051\",\n" +
-            "    \"dpidmd5\":\"0acd1ad238ce94bc5764357462456300\",\n" +
-            "    \"dpidsha1\":\"0e7ba7f58fdde994a51abfd1c0f14d9f90b51d2d\",\n" +
-            "    \"mac\":\"9c:b2:b2:b4:cc:c6\",\n" +
-            "    \"macmd5\":\"6018660532b77322ef8c327513ac0d4b\",\n" +
-            "    \"macsha1\":\"2eb4cb2f061105179b9707c8450a605fca65b45a\",\n" +
-            "    \"ifa\":\"0\",\n" +
-            "    \"make\":\"HUAWEI\",\n" +
-            "    \"model\":\"ATH-AL00\",\n" +
-            "    \"os\":\"android\",\n" +
-            "    \"osv\":\"6.0.1\",\n" +
-            "    \"carrier\":\"46003\",\n" +
-            "    \"language\":\"zh-CN\",\n" +
-            "    \"connectiontype\":4,\n" +
-            "    \"devicetype\":0\n" +
-            "}";
+  public UpPlatRequest.Device buildDevice(String carrier, Integer connnectionType, String os) {
+    UpPlatRequest.Device device = new UpPlatRequest.Device();
+    device.w = 1080;
+    device.h = 1776;
+    device.ua = "Mozilla/5.0 (Linux; Android 6.0.1; ATH-AL00 Build/HONORATH-AL00; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/55.0.2883.91 Mobile Safari/537.36";
+    device.ip = "14.30.158.152";
+    device.geo = new UpPlatRequest.Device.Geo();
+    device.geo.lat = 23.043595;
+    device.geo.lon = 112.869539;
+    device.did = "863546034395903";
+    device.didmd5 = "5656cc117aa7fdff17383d7ae66f1514";
+    device.didsha1 = "b889b1fff1c90838ef677bf7f1deeddac638a156";
+    device.dpid = "7743974f06212051";
+    device.dpidmd5 = "5656cc117aa7fdff17383d7ae66f1514";
+    device.dpidsha1 = "0e7ba7f58fdde994a51abfd1c0f14d9f90b51d2d";
+    device.mac = "9c:b2:b2:b4:cc:c6";
+    device.macmd5 = "6018660532b77322ef8c327513ac0d4b";
+    device.macsha1 = "2eb4cb2f061105179b9707c8450a605fca65b45a";
+    device.ifa = "";
+    device.make = "HUAWEI";
+    device.model = "ATH-AL00";
+    device.os = "android";
+    device.osv = "6.0.1";
+    device.carrier = "46003";
+    device.language = "zh-CN";
+    device.js = 1;
+    device.connectiontype = 2;
+    device.devicetype = 0;
+
+    return device;
   }
 
-  public void buildApp() {
-    String json = "{\n" +
-            "    \"id\":\"58ed8ca5\",\n" +
-            "    \"name\":\"测试 APP\",\n" +
-            "    \"bundle\":\"com.test\",\n" +
-            "    \"version\":\"1.0.0\",\n" +
-            "    \"cat\":[\n" +
-            "        \"IAB5\"\n" +
-            "    ]\n" +
-            "}";
+  public UpPlatRequest.App buildApp() {
+    UpPlatRequest.App app = new UpPlatRequest.App();
+    app.id = "58ed8ca5";
+    app.name = "测试 APP";
+    app.bundle = "com.test";
+    app.version = "1.0.0";
+    app.cat = Arrays.asList("IAB5");
+
+    return app;
   }
 
-  public void buildPmp() {
-    String json = "{\n" +
-            "\"id\": \"123456789\",\n" +
-            "\"bidfloor\": 0.1\n" +
-            "}";
+  public UpPlatRequest.Impression.Pmp buildPmp(String dealId, Double bidFloor) {
+
+    UpPlatRequest.Impression.Pmp pmp = new UpPlatRequest.Impression.Pmp();
+
+    List<UpPlatRequest.Impression.Pmp.Deal> deals = new ArrayList<>();
+
+    UpPlatRequest.Impression.Pmp.Deal deal = new UpPlatRequest.Impression.Pmp.Deal();
+    deal.id = dealId;
+    deal.bidfloor = bidFloor;
+
+    deals.add(deal);
+
+    pmp.deals = deals;
+
+    return pmp;
   }
 
-  public void buildUser() {
+  public UpPlatRequest.User buildUser() {
 
   }
 }
