@@ -1,13 +1,15 @@
 package cn.zhiyingyun.zone.service;
 
+import cn.zhiyingyun.zone.entity.UpPlatResponse;
+
 public interface ICheckResponseService {
-  public void commonCheck();
+  void commonCheck(UpPlatResponse response);
 
-  public void bannerAdCheck();
+  void bannerAdCheck(UpPlatResponse respons);
 
-  public void nativeAdCheck();
+  void nativeAdCheck();
 
-  public void videoAdCheck();
+  void videoAdCheck();
 
-  public void winNoticeCheck();
+  void winNoticeCheck();
 }

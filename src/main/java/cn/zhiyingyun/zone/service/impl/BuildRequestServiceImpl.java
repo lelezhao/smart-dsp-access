@@ -14,7 +14,7 @@ public class BuildRequestServiceImpl implements IBuildRequestService {
   public UpPlatRequest.Impression buildBannerImp(boolean isSupportDeepLink, boolean isSupportDownload, boolean isSecure) {
     UpPlatRequest.Impression impression = new UpPlatRequest.Impression();
     impression.id = UUID.randomUUID().toString();
-    impression.tagid = "XXXXXXXXXXXXXXXXXXXXXXXXX";
+    impression.tagid = "58349F1F392F79EE10715232FB249531";
     impression.instl = 1;
     impression.bidfloor = 0.01;
     if (isSupportDeepLink) {

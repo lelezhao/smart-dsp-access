@@ -1,12 +1,14 @@
 package cn.zhiyingyun.zone.entity;
 
 import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
 
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class UpPlatResponse {
   public String id;
   public String bidid;
@@ -14,10 +16,12 @@ public class UpPlatResponse {
   public List<SeatBid> seatbid;
   public ResponseExt ext;
 
+  @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
   public static class SeatBid {
     public List<Bid> bid;
     public SeatBidExt ext;
 
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class Bid {
       public String impid;
       public Double price;
@@ -34,6 +38,7 @@ public class UpPlatResponse {
       public String dealid;
       public BidExt ext;
 
+      @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
       public class AiuiAdBo {
 
         public int type; // 1：冠名广告素材 2：交互广告answer素材 3：交互广告交互部分
@@ -45,6 +50,7 @@ public class UpPlatResponse {
         public ItaContent itaContent; // type = 3 必填 交互内容类
 
         // 冠名广告素材 type = 1 必填
+        @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
         public class TitleAd extends AiuiBasicPros {
           public String prefixText; // N 冠名广告前缀文本，和suffix_text必有一个，或者两个都有
           public String suffixText; // N 冠名广告后缀文本，和prefix_text必有一个，或者两个都有
@@ -52,6 +58,7 @@ public class UpPlatResponse {
         }
 
         // 交互广告回答结果类 type = 2 必填
+        @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
         public class InteractionAnswer extends AiuiBasicPros {
           public String product; // Y 推荐产品名称
           public String text; // Y 交互广告播报文本
@@ -60,6 +67,7 @@ public class UpPlatResponse {
         }
 
         // 交互内容类 type = 3 必填
+        @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
         public class ItaContent {
           public List<String> reportUrls; // Y 用户信息上报接口地址
           public List<Content> contents; // Y 交互内容，按照顺序依次播报，最后一步收集用户信息
@@ -67,6 +75,7 @@ public class UpPlatResponse {
           public String dspExt; // Y DSP私有数据
         }
 
+        @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
         public class Content extends AiuiBasicPros {
           public String text; // Y 交互广告播报文本
           public List<String> hopeAnswer; // Y 期望回答，匹配该回答进行下一步，正则表达式
@@ -74,12 +83,14 @@ public class UpPlatResponse {
           public String jsonKey; // Y 本次提问问题对应的json key
         }
 
+        @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
         public class AiuiBasicPros {
           public List<String> beginImprs; // Y 播报开始监控 需要包含价格宏
           public List<String> endImprs; // Y 播报结束监控 需要包含价格宏
         }
       }
 
+      @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
       public static class BannerAd extends BasicAdProperty {
         public Integer mtype;
         public String title;
@@ -98,10 +109,12 @@ public class UpPlatResponse {
         public String app_version;  // 下载类广告应用版本
         public BannerAdExt ext;
 
+        @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
         public static class BannerAdExt {
         }
       }
 
+      @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
       public static class NativeAd extends BasicAdProperty {
         public Integer hit_instl;
         public Integer width;
@@ -121,10 +134,12 @@ public class UpPlatResponse {
         public List<String> img_urls;
         public NativeAdExt ext;
 
+        @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
         public static class NativeAdExt {
         }
       }
 
+      @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
       public static class AdWords extends BasicAdProperty {
         public String title;
         public String desc;
@@ -138,10 +153,12 @@ public class UpPlatResponse {
         public List<String> img_urls;
         public NativeAdExt ext;
 
+        @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
         public static class NativeAdExt {
         }
       }
 
+      @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
       public static class VideoAd extends BasicAdProperty {
         public String src;
         public Integer w; // 视频宽，单位 pixel, 激励视频、贴片视频、原生视频必填
@@ -171,10 +188,12 @@ public class UpPlatResponse {
         public String app_version;  // 下载类广告应用版本
         public VideoAdExt ext;
 
+        @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
         public static class VideoAdExt {
         }
       }
 
+      @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
       public static class BasicAdProperty {
         String is_marked;
         String ad_source_mark;
@@ -184,6 +203,7 @@ public class UpPlatResponse {
         List<String> inst_installsucc_url; // 安装 完成上报
       }
 
+      @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
       static class ItaVoiceInfo {
         String app_id; // Y 应用id
         String lib_id; // Y 语音库id
@@ -192,14 +212,17 @@ public class UpPlatResponse {
         List<String> voice_imprs; // N 语义监控和语音合成监控
       }
 
+      @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
       public static class BidExt {
       }
     }
 
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class SeatBidExt {
     }
   }
 
+  @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
   public static class ResponseExt {
   }
 
