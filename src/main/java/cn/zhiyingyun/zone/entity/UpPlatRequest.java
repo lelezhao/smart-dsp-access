@@ -2,6 +2,7 @@ package cn.zhiyingyun.zone.entity;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class UpPlatRequest {
   private static final Integer HTTP_URL = 0;//secure
 
@@ -17,9 +19,9 @@ public class UpPlatRequest {
   public App app;
   public Device device;
   public User user;
-  public Debug debug;
   public RequestExt ext;
 
+  @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
   public static class Impression {
     public String id;
     public List<Integer> bindustry; // 禁投行业列表
@@ -42,6 +44,7 @@ public class UpPlatRequest {
     public Integer secure = HTTP_URL;//本次请求期望物料中所有的 url 的网络协议类型是 http 还是 https取值范围， 0:httpurl,1:https url， 默认为 0(http url)
     public int is_downloadable = 1; //本次请求是否支持下载类广告,0不支持,1支持  默认支持
 
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class Banner extends BasicReqPros {
       public Integer type;
       public Integer w;
@@ -49,10 +52,12 @@ public class UpPlatRequest {
       public List<Integer> matypes; // 1:json 2:html
       public BannerExt ext;
 
+      @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
       public static class BannerExt {
       }
     }
 
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class Native extends BasicReqPros {
       public Title title;
       public Desc desc;
@@ -60,83 +65,102 @@ public class UpPlatRequest {
       public Img img;
       public NativeExt ext;
 
+      @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
       public static class Title {
         public Integer len;
         public TitleExt ext;
 
+        @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
         public static class TitleExt {
         }
       }
 
+      @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
       public static class Desc {
         public Integer len;
         public DescExt ext;
 
+        @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
         public static class DescExt {
         }
       }
 
+      @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
       public static class Icon {
         public Integer w;
         public Integer h;
         public IconExt ext;
 
+        @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
         public static class IconExt {
         }
       }
 
+      @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
       public static class Img {
         public Integer w;
         public Integer h;
         public ImgExt ext;
 
+        @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
         public static class ImgExt {
-        };
+        }
       }
 
+      @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
       public static class NativeExt {
       }
     }
 
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class BasicReqPros {
       public List<Integer> formats; // 图片素材格式
     }
 
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class AdWords {
       public Title title;
       public Desc desc;
       public Icon icon;
       public AdWordsExt ext;
 
+      @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
       public static class Title {
         public Integer len;
         public TitleExt ext;
 
+        @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
         public static class TitleExt {
         }
       }
 
+      @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
       public static class Desc {
         public Integer len;
         public DescExt ext;
 
+        @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
         public static class DescExt {
         }
       }
 
+      @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
       public static class Icon {
         public Integer w;
         public Integer h;
         public IconExt ext;
 
+        @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
         public static class IconExt {
         }
       }
 
+      @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
       public static class AdWordsExt {
       }
     }
 
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class Video {
       public Integer protocol;
       public Integer w;
@@ -152,9 +176,11 @@ public class UpPlatRequest {
 
       public VideoExt ext;
 
+      @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
       public static class VideoExt {
       }
 
+      @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
       public static class Size {
         private Integer w;
         private Integer h;
@@ -163,24 +189,26 @@ public class UpPlatRequest {
           this.w = w;
           this.h = h;
         }
-
-
       }
     }
 
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class Pmp {
       public List<Deal> deals;
       public Boolean monopolistic; // 标识此次请求的广告位是否为兜底广告位
 
+      @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
       public static class Deal {
         public String id;
         public double bidfloor;
       }
     }
 
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class ImpressionExt {
     }
 
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public class SemanticBo {
 
       public List<String> texts; // Y 听写结果，同一语义场景前几轮会话的包含的语义槽位值（如果有normValue取normValue,没有normValue取value）
@@ -195,6 +223,7 @@ public class UpPlatRequest {
       public String dspExt; // dsp私有数据
 
 
+      @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
       public class SemanticSlot {
         public String name; // Y 语义槽名称
         public String value; // N 语义槽位值 与normValue必有一个
@@ -204,6 +233,7 @@ public class UpPlatRequest {
     }
   }
 
+  @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
   public static class App {
     public String id;
     public String name;
@@ -212,10 +242,12 @@ public class UpPlatRequest {
     public List<String> cat;
     public AppExt ext;
 
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class AppExt {
     }
   }
 
+  @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
   public static class Device {
     public Integer w;
     public Integer h;
@@ -244,23 +276,28 @@ public class UpPlatRequest {
     public Integer devicetype;
     public DeviceExt ext;
 
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class Geo {
       public Double lat;
       public Double lon;
       public GeoExt ext;
 
+      @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
       public static class GeoExt {
       }
     }
 
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class DeviceExt {
     }
   }
 
+  @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
   public static class User {
     public List<String> tags;
     public UserExt ext;
 
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class UserExt {
       public List<String> app_type_list;
       public Integer vip_install_statu; // 0-未安装 1-已安装
@@ -268,33 +305,9 @@ public class UpPlatRequest {
     }
   }
 
+  @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
   public static class RequestExt {
   }
-
-  public class Debug {
-
-    public Integer action_type; // 用于指定下发广告的交互类型，取值范围：0，不限制； 1，跳转类； 2，下载类；3，特殊下载类（参见章节2.3.6）。不指定的话，按值为0处理
-    public Integer landing_type; // 用于指定下发广告的落地页类型，取值范围：0，不限制；1，包含landing_url和deep_link；2，仅包含landing_url。不指定的话，按值为0处理
-    public VideoType video_type;
-    public VariousNativeType v_native_type;
-
-    public class VideoType {
-      public Integer type; // 视频素材类型，取值范围：0，不限制；1，纯视频；2，视频+前覆盖页；3，视频+后覆盖页；4，视频+前覆盖页+后覆盖页
-      public Integer cover_type; // 视频覆盖页类型，取值范围：0，不限制；1，img；2，html
-      public Integer w; // 视频宽，单位pixel
-      public Integer h; // 视频高，单位pixel
-      public Integer native_mtype; // 原生广告位，期望得到的素材类型。0，不限制；1，图片素材；2，视频
-    }
-
-    public class VariousNativeType {
-      public Integer type; // 多样原生素材类型 2 (焦点图)3（信息流） 4（一图） 5（三图一文）
-      public Integer w; // 图片宽
-      public Integer h; // 图片高
-
-    }
-
-  }
-
 
   //
   private static final Logger log = LoggerFactory.getLogger(UpPlatRequest.class);

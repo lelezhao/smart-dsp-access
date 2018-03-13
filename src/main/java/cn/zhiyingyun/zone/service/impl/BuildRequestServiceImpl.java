@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @Service
 public class BuildRequestServiceImpl implements IBuildRequestService {
-  public UpPlatRequest.Impression buildBannerImp(boolean isSupportDeepLink, boolean isSupportDownload, int secure) {
+  public UpPlatRequest.Impression buildBannerImp(boolean isSupportDeepLink, boolean isSupportDownload, boolean isSecure) {
     UpPlatRequest.Impression impression = new UpPlatRequest.Impression();
     impression.id = UUID.randomUUID().toString();
     impression.tagid = "XXXXXXXXXXXXXXXXXXXXXXXXX";
@@ -29,7 +29,7 @@ public class BuildRequestServiceImpl implements IBuildRequestService {
       impression.is_downloadable = 0;
     }
 
-    if (secure == 1) {
+    if (isSecure) {
       impression.secure = 1;
     } else {
       impression.secure = 0;
@@ -46,7 +46,7 @@ public class BuildRequestServiceImpl implements IBuildRequestService {
     return impression;
   }
 
-  public UpPlatRequest.Impression buildNativeImp(boolean isSupportDeepLink, boolean isSupportDownload, int secure) {
+  public UpPlatRequest.Impression buildNativeImp(boolean isSupportDeepLink, boolean isSupportDownload, boolean isSecure) {
     String json = "{\n" +
             "\"id\": \"4fd216e0-baf9-483e-9c88-43e8421b9292\",\n" +
             "\"tagid\": \"XXXXXXXXXXXXXXXXXXX\",\n" +
@@ -69,7 +69,7 @@ public class BuildRequestServiceImpl implements IBuildRequestService {
     return null;
   }
 
-  public UpPlatRequest.Impression buildVideoImp(boolean isSupportDeepLink, boolean isSupportDownload, int secure) {
+  public UpPlatRequest.Impression buildVideoImp(boolean isSupportDeepLink, boolean isSupportDownload, boolean isSecure) {
     String josn = "{\n" +
             "    \"id\":\"9f06a56f-2248-4834-978e-770bd5cc8ecd\",\n" +
             "    \"instl\":2,\n" +
@@ -148,6 +148,6 @@ public class BuildRequestServiceImpl implements IBuildRequestService {
   }
 
   public UpPlatRequest.User buildUser() {
-
+    return new UpPlatRequest.User();
   }
 }
