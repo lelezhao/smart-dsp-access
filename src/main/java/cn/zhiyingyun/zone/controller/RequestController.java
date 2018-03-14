@@ -23,6 +23,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -36,6 +37,11 @@ public class RequestController extends BaseController {
   @Autowired
   IDspBidHistoryService dspBidHistoryService;
 
+  private static final List<String> bannerSlotTypes = Arrays.asList("s_t-banner,s_t-full,s_t-interstitial");
+  private static final List<String> nativeSlotTypes = Arrays.asList("s_t-feeds,s_t-focus,s_t-icon,s_t-imagewall");
+  private static final List<String> videoSlotTypes = Arrays.asList("s_t-video");
+
+
   StringHttpMessageConverter stringHttpMessageConverter = new StringHttpMessageConverter(Charset.forName("UTF-8"));
 
   private RestTemplate restTemplate = new RestTemplateBuilder().additionalMessageConverters(stringHttpMessageConverter).build();
@@ -43,16 +49,37 @@ public class RequestController extends BaseController {
 
   @PostMapping(value = "/build", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public JsonResult build(RequstBuildDto requstBuildDto) {
-
     //参数校验
+    if (requstBuildDto == null) {
+      return renderError("参数不能为空！");
+    }
+
+    if (StringUtils.isBlank(requstBuildDto.getSlotType())) {
+      return renderError("请选择广告位类型！");
+    }
 
     UpPlatRequest upPlatRequest = new UpPlatRequest();
 
     upPlatRequest.id = UUID.randomUUID().toString() + "-" + System.currentTimeMillis();
 
-    UpPlatRequest.Impression impression = buildRequestService.buildBannerImp(requstBuildDto.getSupportDeeplink(), requstBuildDto.getSupportDownload(), requstBuildDto.getSecure());
+    UpPlatRequest.Impression impression = null;
 
-    UpPlatRequest.Device device = buildRequestService.buildDevice(requstBuildDto.getCarrir(), 4, requstBuildDto.getOsType());
+    if (bannerSlotTypes.contains(requstBuildDto.getSlotType())) {
+      impression = buildRequestService.buildBannerImp(requstBuildDto.getSupportDeeplink(), requstBuildDto.getSupportDownload(), requstBuildDto.getSecure());
+    } else if (nativeSlotTypes.contains(requstBuildDto.getSlotType())) {
+      impression = buildRequestService.buildNativeImp(requstBuildDto.getSupportDeeplink(), requstBuildDto.getSupportDownload(), requstBuildDto.getSecure());
+    } else if (videoSlotTypes.contains(requstBuildDto.getSlotType())) {
+      impression = buildRequestService.buildVideoImp(requstBuildDto.getSupportDeeplink(), requstBuildDto.getSupportDownload(), requstBuildDto.getSecure());
+    }
+    if(impression==null){
+      return renderError("impression构建失败");
+    }
+
+    if(StringUtils.isBlank(requstBuildDto.getOsType())){
+      return renderError("请选择操作系统！");
+    }
+
+    UpPlatRequest.Device device = buildRequestService.buildDevice(requstBuildDto.getOsType());
 
     UpPlatRequest.App app = buildRequestService.buildApp();
 
@@ -80,6 +107,8 @@ public class RequestController extends BaseController {
     httpHeaders.add("content-type", "application/json");
     httpHeaders.add("x-openrtb-version", "2.3.2");
     httpHeaders.add("Accept", MediaType.APPLICATION_JSON.toString());
+    httpHeaders.add("Accept-Encoding", "gzip");
+    httpHeaders.add("Content-Encoding", "UTF-8");
 
 
     HttpEntity<String> requstEntity = new HttpEntity<>(JSONObject.toJSONString(upPlatRequest), httpHeaders);

@@ -46,5 +46,11 @@ public class AdxEnums {
     int ADUNIT_TYPE_ID_AIUI_HEADAD = 20; //冠名广告
     int ADUNIT_TYPE_ID_AIUI_ITAAD = 21; //交互广告
     int ADUNIT_TYPE_ID_MAX_NUMBER = 21; //记录广告类型id最大值，目前流量定投会用到
+
+
+    // 操作系统类型
+    String OS_ANDROID = "android";
+    String OS_IOS = "ios";
+    String OS_WINDOWS = "windows";
   }
 }

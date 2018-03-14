@@ -1,6 +1,5 @@
 package cn.zhiyingyun.zone.service.impl;
 
-import cn.zhiyingyun.zone.domain.DspUser;
 import cn.zhiyingyun.zone.repository.UserRepository;
 import cn.zhiyingyun.zone.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;

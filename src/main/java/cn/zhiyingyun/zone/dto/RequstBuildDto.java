@@ -9,8 +9,6 @@ public class RequstBuildDto {
   private Boolean isSupportDeeplink;
   private Boolean isSupportDownload;
   private Boolean isSecure;
-  private String carrir;
-  private String netType;
   private String osType;
 
   public String getSlotType() {
@@ -75,22 +73,6 @@ public class RequstBuildDto {
 
   public void setSecure(Boolean secure) {
     isSecure = secure;
-  }
-
-  public String getCarrir() {
-    return carrir;
-  }
-
-  public void setCarrir(String carrir) {
-    this.carrir = carrir;
-  }
-
-  public String getNetType() {
-    return netType;
-  }
-
-  public void setNetType(String netType) {
-    this.netType = netType;
   }
 
   public String getOsType() {

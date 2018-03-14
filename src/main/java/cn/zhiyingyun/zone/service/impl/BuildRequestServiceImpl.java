@@ -37,18 +37,36 @@ public class BuildRequestServiceImpl implements IBuildRequestService {
     return impression;
   }
 
-  public UpPlatRequest.Impression buildBannerImp(boolean isSupportDeepLink, boolean isSupportDownload, boolean isSecure) {
+  public UpPlatRequest.Impression buildBannerImp(String slotType, boolean isSupportDeepLink, boolean isSupportDownload, boolean isSecure) {
     UpPlatRequest.Impression impression = new UpPlatRequest.Impression();
-
-    impression.tagid = "58349F1F392F79EE10715232FB249531";
-    impression.instl = 1;
 
     buildCommonImp(impression, isSupportDeepLink, isSupportDownload, isSecure);
 
     UpPlatRequest.Impression.Banner banner = new UpPlatRequest.Impression.Banner();
-    banner.w = 640;
-    banner.h = 100;
-    banner.type = 1;
+
+    if (slotType.equals("s_t-banner")) {
+      impression.instl = 1;
+      banner.type = 1;
+      banner.w = 640;
+      banner.h = 100;
+
+      impression.tagid = "58349F1F392F79EE10715232FB249531";
+    } else if (slotType.equals("s_t-full")) {
+      impression.instl = 2;
+      banner.type = 2;
+      banner.w = 640;
+      banner.h = 1136;
+
+      impression.tagid = "58349F1F392F79EE10715232FB249531";
+    } else if (slotType.equals("s_t-interstitial")) {
+      impression.instl = 3;
+      banner.type = 3;
+      banner.w = 600;
+      banner.h = 500;
+
+      impression.tagid = "58349F1F392F79EE10715232FB249531";
+    }
+
     banner.matypes = Arrays.asList(1, 2);
 
     impression.banner = banner;
@@ -102,7 +120,7 @@ public class BuildRequestServiceImpl implements IBuildRequestService {
     return impression;
   }
 
-  public UpPlatRequest.Device buildDevice(String carrier, Integer connnectionType, String os) {
+  public UpPlatRequest.Device buildDevice(String os) {
     UpPlatRequest.Device device = new UpPlatRequest.Device();
     device.w = 1080;
     device.h = 1776;
@@ -111,19 +129,28 @@ public class BuildRequestServiceImpl implements IBuildRequestService {
     device.geo = new UpPlatRequest.Device.Geo();
     device.geo.lat = 23.043595;
     device.geo.lon = 112.869539;
-    device.did = "863546034395903";
-    device.didmd5 = "5656cc117aa7fdff17383d7ae66f1514";
-    device.didsha1 = "b889b1fff1c90838ef677bf7f1deeddac638a156";
-    device.dpid = "7743974f06212051";
-    device.dpidmd5 = "5656cc117aa7fdff17383d7ae66f1514";
-    device.dpidsha1 = "0e7ba7f58fdde994a51abfd1c0f14d9f90b51d2d";
+    //android
+    if (os.equals("o_t-android")) {
+      device.os = "android";
+      device.did = "863546034395903";
+      device.didmd5 = "5656cc117aa7fdff17383d7ae66f1514";
+      device.didsha1 = "b889b1fff1c90838ef677bf7f1deeddac638a156";
+      device.dpid = "7743974f06212051";
+      device.dpidmd5 = "5656cc117aa7fdff17383d7ae66f1514";
+      device.dpidsha1 = "0e7ba7f58fdde994a51abfd1c0f14d9f90b51d2d";
+    } else if (os.equals("o_t-ios")) {//ios
+      device.os = "ios";
+      device.ifa = "1E2DFA89-496A-47FD-9941-DF1FC4E6484A";
+      device.dpid = "";
+      device.dpidmd5 = "";
+      device.dpidsha1 = "";
+    }
+
     device.mac = "9c:b2:b2:b4:cc:c6";
     device.macmd5 = "6018660532b77322ef8c327513ac0d4b";
     device.macsha1 = "2eb4cb2f061105179b9707c8450a605fca65b45a";
-    device.ifa = "";
     device.make = "HUAWEI";
     device.model = "ATH-AL00";
-    device.os = "android";
     device.osv = "6.0.1";
     device.carrier = "46003";
     device.language = "zh-CN";

@@ -7,8 +7,6 @@ import java.sql.Timestamp;
 @Table(name = "dsp_bid_history", schema = "smart_dsp", catalog = "")
 public class DspBidHistory {
   private Integer id;
-  private Timestamp createTime;
-  private Timestamp updateTime;
   private Integer userId;
   private String bidid;
   private String requestBody;
@@ -18,6 +16,8 @@ public class DspBidHistory {
   private String responseBody;
   private String errorMessage;
   private String checkResult;
+  private Timestamp createTime;
+  private Timestamp updateTime;
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,48 +28,6 @@ public class DspBidHistory {
 
   public void setId(Integer id) {
     this.id = id;
-  }
-
-  @Basic
-  @Column(name = "create_time", nullable = true)
-  public Timestamp getCreateTime() {
-    return createTime;
-  }
-
-  public void setCreateTime(Timestamp createTime) {
-    this.createTime = createTime;
-  }
-
-  @Basic
-  @Column(name = "update_time", nullable = true)
-  public Timestamp getUpdateTime() {
-    return updateTime;
-  }
-
-  public void setUpdateTime(Timestamp updateTime) {
-    this.updateTime = updateTime;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-
-    DspBidHistory that = (DspBidHistory) o;
-
-    if (id != null ? !id.equals(that.id) : that.id != null) return false;
-    if (createTime != null ? !createTime.equals(that.createTime) : that.createTime != null) return false;
-    if (updateTime != null ? !updateTime.equals(that.updateTime) : that.updateTime != null) return false;
-
-    return true;
-  }
-
-  @Override
-  public int hashCode() {
-    int result = id != null ? id.hashCode() : 0;
-    result = 31 * result + (createTime != null ? createTime.hashCode() : 0);
-    result = 31 * result + (updateTime != null ? updateTime.hashCode() : 0);
-    return result;
   }
 
   @Basic
@@ -160,5 +118,65 @@ public class DspBidHistory {
 
   public void setCheckResult(String checkResult) {
     this.checkResult = checkResult;
+  }
+
+  @Basic
+  @Column(name = "create_time", nullable = true)
+  public Timestamp getCreateTime() {
+    return createTime;
+  }
+
+  public void setCreateTime(Timestamp createTime) {
+    this.createTime = createTime;
+  }
+
+  @Basic
+  @Column(name = "update_time", nullable = true)
+  public Timestamp getUpdateTime() {
+    return updateTime;
+  }
+
+  public void setUpdateTime(Timestamp updateTime) {
+    this.updateTime = updateTime;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    DspBidHistory that = (DspBidHistory) o;
+
+    if (id != null ? !id.equals(that.id) : that.id != null) return false;
+    if (userId != null ? !userId.equals(that.userId) : that.userId != null) return false;
+    if (bidid != null ? !bidid.equals(that.bidid) : that.bidid != null) return false;
+    if (requestBody != null ? !requestBody.equals(that.requestBody) : that.requestBody != null) return false;
+    if (requestUrl != null ? !requestUrl.equals(that.requestUrl) : that.requestUrl != null) return false;
+    if (sellType != null ? !sellType.equals(that.sellType) : that.sellType != null) return false;
+    if (responseCode != null ? !responseCode.equals(that.responseCode) : that.responseCode != null) return false;
+    if (responseBody != null ? !responseBody.equals(that.responseBody) : that.responseBody != null) return false;
+    if (errorMessage != null ? !errorMessage.equals(that.errorMessage) : that.errorMessage != null) return false;
+    if (checkResult != null ? !checkResult.equals(that.checkResult) : that.checkResult != null) return false;
+    if (createTime != null ? !createTime.equals(that.createTime) : that.createTime != null) return false;
+    if (updateTime != null ? !updateTime.equals(that.updateTime) : that.updateTime != null) return false;
+
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = id != null ? id.hashCode() : 0;
+    result = 31 * result + (userId != null ? userId.hashCode() : 0);
+    result = 31 * result + (bidid != null ? bidid.hashCode() : 0);
+    result = 31 * result + (requestBody != null ? requestBody.hashCode() : 0);
+    result = 31 * result + (requestUrl != null ? requestUrl.hashCode() : 0);
+    result = 31 * result + (sellType != null ? sellType.hashCode() : 0);
+    result = 31 * result + (responseCode != null ? responseCode.hashCode() : 0);
+    result = 31 * result + (responseBody != null ? responseBody.hashCode() : 0);
+    result = 31 * result + (errorMessage != null ? errorMessage.hashCode() : 0);
+    result = 31 * result + (checkResult != null ? checkResult.hashCode() : 0);
+    result = 31 * result + (createTime != null ? createTime.hashCode() : 0);
+    result = 31 * result + (updateTime != null ? updateTime.hashCode() : 0);
+    return result;
   }
 }

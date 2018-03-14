@@ -17,7 +17,7 @@ public class CheckResponseServiceImpl implements ICheckResponseService {
 
   private static final Logger logger = LoggerFactory.getLogger(CheckResponseServiceImpl.class);
 
-  private static final String PRICE_MACRO = "${AUCTION_PRICE}";
+  private static final String AUCTION_PRICE = "${AUCTION_PRICE}";
 
   @Override
   public void commonCheck(UpPlatResponse response) {
@@ -169,9 +169,88 @@ controlHtmlSnippetType[4,8]不做监控校验
 
   @Override
   public void videoAdCheck(UpPlatResponse response) {
+
+    UpPlatResponse.SeatBid.Bid bid = response.seatbid.get(0).bid.get(0);
+
+    UpPlatResponse.SeatBid.Bid.VideoAd videoAd = bid.video_ad;
+
+    String src = videoAd.src;
+    String landing = videoAd.landing;
+    String deeplink = videoAd.deep_link;
+    Integer dur = videoAd.duration;
+    String startCover = videoAd.start_cover;
+    String overCover = videoAd.complete_cover;
   }
 
   @Override
   public void winNoticeCheck(UpPlatResponse response) {
+  }
+
+
+  private boolean validAuctionPriceMacro(int controlPriceNotice, String nurl, List<String> imps, List<String> clicks) {
+    switch (controlPriceNotice) {
+      case AdxEnums.ControlPriceNotice.SERVER_NOTICE:
+        if (!validNurlAuctionPrice(nurl)) {
+          logger.warn("nurl does contains price macro!");
+          return false;
+        }
+        break;
+      case AdxEnums.ControlPriceNotice.CLIENT_NOTICE:
+        if (!validTrackAuctionPrice(imps)) {
+          logger.warn("imps does contains price macro!");
+          return false;
+        }
+        break;
+      case AdxEnums.ControlPriceNotice.SERVER_AND_CLIENT:
+        if (!validNurlAuctionPrice(nurl)) {
+          logger.warn("nurl does contains price macro!");
+          return false;
+        }
+        if (!validTrackAuctionPrice(imps)) {
+          logger.warn("imps does contains price macro!");
+          return false;
+        }
+        break;
+      case AdxEnums.ControlPriceNotice.SERVER_AND_CLIENT_AND_CLICK:
+        if (!validNurlAuctionPrice(nurl)) {
+          logger.warn("nurl does contains price macro!");
+          return false;
+        }
+        if (!validTrackAuctionPrice(imps)) {
+          logger.warn("imps does contains price macro!");
+          return false;
+        }
+        if (!validTrackAuctionPrice(clicks)) {
+          logger.warn("clicks does contains price macro!");
+          return false;
+        }
+        break;
+      default:
+        logger.warn("controlPriceNotice = {} not valid", controlPriceNotice);
+    }
+    return true;
+  }
+
+  private boolean validNurlAuctionPrice(String nurl) {
+    if (StringUtils.isBlank(nurl) || !nurl.contains(AUCTION_PRICE)) {
+      logger.warn("controlPriceNotice = {},nurl is blank or nurl doesn't contains price macro");
+      return false;
+    }
+    return true;
+  }
+
+  private boolean validTrackAuctionPrice(List<String> trackes) {
+    if (CollectionUtils.isEmpty(trackes)) {
+      logger.warn("trackes is empty");
+      return false;
+    }
+    for (String tracker : trackes) {
+      if (StringUtils.isNotBlank(tracker)) {
+        if (tracker.contains(AUCTION_PRICE)) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 }
