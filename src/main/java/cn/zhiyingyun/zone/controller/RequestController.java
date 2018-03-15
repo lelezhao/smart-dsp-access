@@ -2,6 +2,7 @@ package cn.zhiyingyun.zone.controller;
 
 import cn.zhiyingyun.zone.common.JsonResult;
 import cn.zhiyingyun.zone.domain.DspUser;
+import cn.zhiyingyun.zone.dto.BidResponseDto;
 import cn.zhiyingyun.zone.dto.RequstBuildDto;
 import cn.zhiyingyun.zone.entity.UpPlatRequest;
 import cn.zhiyingyun.zone.entity.UpPlatResponse;
@@ -10,6 +11,7 @@ import cn.zhiyingyun.zone.service.ICheckResponseService;
 import cn.zhiyingyun.zone.service.IDspBidHistoryService;
 import cn.zhiyingyun.zone.service.IUserService;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -172,13 +175,67 @@ public class RequestController extends BaseController {
 
     dspBidHistoryService.save(bidHistory);*/
 
-    if (StringUtils.isBlank(responseEntity.getBody())) {
+    if (responseEntity.getStatusCodeValue() == 200 && StringUtils.isBlank(responseEntity.getBody())) {
       return renderError("竞价响应内容为空！");
     }
 
+    UpPlatResponse upPlatResponse = null;
 
-    UpPlatResponse upPlatResponse = JSONObject.parseObject(responseEntity.getBody(), UpPlatResponse.class);
+    try {
+      upPlatResponse = JSONObject.parseObject(responseEntity.getBody(), UpPlatResponse.class);
+    } catch (Exception e) {
+      return renderError("竞价响应内容解析失败！");
+    }
 
-    return renderSuccess(upPlatResponse);
+    if (upPlatRequest == null) {
+      return renderError("竞价响应内容解析失败！");
+    }
+
+    BidResponseDto bidResponseDto = new BidResponseDto();
+    bidResponseDto.setHttpCode(responseEntity.getStatusCodeValue());
+    bidResponseDto.setUpPlatResponse(upPlatResponse);
+    bidResponseDto.setErrorMessage(new ArrayList<>());
+
+    //执行响应结果校验
+    //1.commonCheck
+    List<String> commonCheckError = checkResponseService.commonCheck(upPlatResponse);
+    if (CollectionUtils.isNotEmpty(commonCheckError)) {
+      bidResponseDto.getErrorMessage().addAll(commonCheckError);
+
+      return renderSuccess(bidResponseDto);
+    }
+
+    Integer instl = upPlatRequest.imp.get(0).instl;
+
+    //banner check
+    if (Arrays.asList(1, 2, 3).contains(instl)) {
+      List<String> bannerCheckError = checkResponseService.bannerAdCheck(instl, upPlatResponse);
+
+      if (CollectionUtils.isNotEmpty(bannerCheckError)) {
+        bidResponseDto.getErrorMessage().addAll(bannerCheckError);
+
+        return renderSuccess(bidResponseDto);
+      }
+    } else if (instl == 14) {//video check
+      List<String> videoCheckError = checkResponseService.videoAdCheck(upPlatResponse);
+
+      if (CollectionUtils.isNotEmpty(videoCheckError)) {
+        bidResponseDto.getErrorMessage().addAll(videoCheckError);
+
+        return renderSuccess(bidResponseDto);
+      } else {//native check
+        List<String> nativeCheckError = checkResponseService.nativeAdCheck(upPlatResponse);
+
+        if (CollectionUtils.isNotEmpty(nativeCheckError)) {
+          bidResponseDto.getErrorMessage().addAll(nativeCheckError);
+
+          return renderSuccess(nativeCheckError);
+        }
+      }
+    }
+
+    //check win notice
+
+    return renderSuccess(bidResponseDto);
   }
 }

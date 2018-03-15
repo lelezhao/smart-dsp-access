@@ -19,27 +19,29 @@ public class CheckResponseServiceImpl implements ICheckResponseService {
 
   private static final String AUCTION_PRICE = "${AUCTION_PRICE}";
 
+  /**
+   * （2）响应为空
+   * （3）响应内容参数错误
+   * （4）seatbid为空
+   * （5）bid为空
+   * （6）若请求为pdb交易，响应中dealid为空或与请求中不一致
+   * （7）出价为空
+   * （9）下发了下载类广告,但媒体不支持
+   *
+   * @param response
+   * @return
+   */
   @Override
-  public void commonCheck(UpPlatResponse response) {
+  public List<String> commonCheck(UpPlatResponse response) {
+    List<String> errorMessage = new ArrayList<>();
 
-    /*
-    （2）响应为空
-（3）响应内容参数错误
-
-（4）seatbid为空
-（5）bid为空
-（6）若请求为pdb交易，响应中dealid为空或与请求中不一致
-（7）出价为空
-（9）下发了下载类广告,但媒体不支持
-    * */
-    if (response == null) {
-      logger.debug("response转UplatResponse返回null,sid={}");
-    }
     if (response.seatbid == null || response.seatbid.size() == 0) {
-      logger.debug("seatbid为空,sid={}");
+      errorMessage.add("seatbid为空!");
+      return errorMessage;
     }
     if (response.seatbid.get(0).bid == null || response.seatbid.get(0).bid.size() == 0) {
-      logger.debug("bid为空,sid={}");
+      errorMessage.add("bid为空!");
+      return errorMessage;
     }
 
     UpPlatResponse.SeatBid.Bid bid = response.seatbid.get(0).bid.get(0);
@@ -47,7 +49,8 @@ public class CheckResponseServiceImpl implements ICheckResponseService {
     // 出价
     Double price = bid.price;
     if (price == null) {
-      logger.debug("出价price为空,sid={}");
+      errorMessage.add("出价price为空！");
+      return errorMessage;
     }
 
     Integer lattr = bid.lattr;
@@ -56,36 +59,48 @@ public class CheckResponseServiceImpl implements ICheckResponseService {
       //todo 下发了下载类广告,但媒体不支持
     }
 
+    return null;
   }
 
+  /**
+   * （8）响应banner_ad为空
+   * （10）mtype为空
+   * (11)若下发html或html片段，banner中的html为空
+   * （12）若下发html片段，controlHtmlSnippetType[1,5]单独的曝光监控或点击监控为空；
+   * controlHtmlSnippetType[2,6]单独的曝光监控为空
+   * controlHtmlSnippetType[3,7]单独的点击监控为空
+   * controlHtmlSnippetType[4,8]不做监控校验
+   * （13）若下发html，返回的完整的html物料没有讯飞曝光宏或者没有讯飞点击宏
+   *
+   * @param response
+   * @return
+   */
   @Override
-  public void bannerAdCheck(UpPlatResponse response) {
-    /*（8）响应banner_ad为空
-（10）mtype为空
-(11)若下发html或html片段，banner中的html为空
+  public List<String> bannerAdCheck(Integer instl, UpPlatResponse response) {
+    List<String> errorMessage = new ArrayList<>();
 
-（12）若下发html片段，controlHtmlSnippetType[1,5]单独的曝光监控或点击监控为空；
-controlHtmlSnippetType[2,6]单独的曝光监控为空
-controlHtmlSnippetType[3,7]单独的点击监控为空
-controlHtmlSnippetType[4,8]不做监控校验
-（13）若下发html，返回的完整的html物料没有讯飞曝光宏或者没有讯飞点击宏
-    * */
     UpPlatResponse.SeatBid.Bid bid = response.seatbid.get(0).bid.get(0);
 
     UpPlatResponse.SeatBid.Bid.BannerAd banner = bid.banner_ad;
     if (banner == null) {
-      logger.debug("banner_ad为空,sid={}");
+      errorMessage.add("banner_ad为空!");
+
+      return errorMessage;
     }
 
     Integer mtype = banner.mtype;
 
     if (mtype == null) {
-      logger.debug("mtype为空,sid={}");
+      errorMessage.add("mtype为空!");
+
+      return errorMessage;
     }
 
     if (mtype == AdxEnums.MType.HTML || mtype == AdxEnums.MType.HTML_SNIPPET) {
       if (StringUtils.isBlank(banner.html)) {
-        logger.debug("banner中的html为空！sid={}");
+        errorMessage.add("banner中的html为空!");
+
+        return errorMessage;
       }
     }
 
@@ -116,48 +131,50 @@ controlHtmlSnippetType[4,8]不做监控校验
     List<String> click = banner.click;
 
     if (StringUtils.isBlank(landing)) {
-      logger.debug("landing为空,sid={}");
+      errorMessage.add("landing为空!");
     }
 
     // 展示监控不为空，且至少有一个要包含${AUCTION_PRICE}
     if (impress == null || impress.size() == 0) {
-      logger.debug("曝光监控impress为空,sid={}");
+      errorMessage.add("曝光监控impress为空");
     }
     // 点击监控不为空
     if (click == null || click.size() == 0) {
-      logger.debug("点击监控click为空,sid={}");
+      errorMessage.add("点击监控click为空");
     }
 
     if (mtype == AdxEnums.MType.PLAIN_TEXT) {
-      if (1 != AdxEnums.AdConstants.ADUNIT_TYPE_ID_BANNER) {
-        logger.debug("目前只有横幅支持文字链,sid={}");
+      if (instl != AdxEnums.AdConstants.ADUNIT_TYPE_ID_BANNER) {
+        errorMessage.add("目前只有横幅支持文字链!");
       }
       if (StringUtils.isBlank(title)) {
-        logger.debug("title为空,sid={}");
+        errorMessage.add("title为空!");
       }
     } else if (mtype == AdxEnums.MType.PLAIN_IMAGE) {
       if (StringUtils.isBlank(image)) {
-        logger.debug("image url为空,sid={}");
+        errorMessage.add("image url为空!");
       }
     } else if (mtype == AdxEnums.MType.IMAGE_TEXT) {
-      if (2 == AdxEnums.AdConstants.ADUNIT_TYPE_ID_FULL) {
-        logger.debug("全屏暂不支持图文素材,sid={}");
+      if (instl == AdxEnums.AdConstants.ADUNIT_TYPE_ID_FULL) {
+        errorMessage.add("全屏暂不支持图文素材!");
       }
 
       if (StringUtils.isBlank(title)) {
-        logger.debug("title为空,sid={}");
+        errorMessage.add("title为空!");
       }
 
       if (StringUtils.isBlank(image)) {
-        logger.debug("image url为空,sid={}");
+        errorMessage.add("image url为空!");
       }
     } else {
-      logger.debug("不支持的mtype = {},sid={}", mtype);
+      errorMessage.add("不支持的mtype值!");
     }
+
+    return errorMessage;
   }
 
   @Override
-  public void nativeAdCheck(UpPlatResponse response) {
+  public List<String> nativeAdCheck(UpPlatResponse response) {
 
     UpPlatResponse.SeatBid.Bid bid = response.seatbid.get(0).bid.get(0);
 
@@ -165,10 +182,13 @@ controlHtmlSnippetType[4,8]不做监控校验
     if (nativeAd == null) {
       logger.debug("native_ad为空,sid={}");
     }
+
+
+    return null;
   }
 
   @Override
-  public void videoAdCheck(UpPlatResponse response) {
+  public List<String> videoAdCheck(UpPlatResponse response) {
 
     UpPlatResponse.SeatBid.Bid bid = response.seatbid.get(0).bid.get(0);
 
@@ -180,10 +200,14 @@ controlHtmlSnippetType[4,8]不做监控校验
     Integer dur = videoAd.duration;
     String startCover = videoAd.start_cover;
     String overCover = videoAd.complete_cover;
+
+
+    return null;
   }
 
   @Override
-  public void winNoticeCheck(UpPlatResponse response) {
+  public List<String> winNoticeCheck(UpPlatResponse response) {
+    return null;
   }
 
 
