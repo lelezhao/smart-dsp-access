@@ -1,5 +1,6 @@
 package cn.zhiyingyun.zone.repository;
 
+import cn.zhiyingyun.zone.domain.DspBidHistory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;

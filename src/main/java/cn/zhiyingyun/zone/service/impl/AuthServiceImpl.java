@@ -1,5 +1,6 @@
 package cn.zhiyingyun.zone.service.impl;
 
+import cn.zhiyingyun.zone.domain.DspUser;
 import cn.zhiyingyun.zone.dto.TokenInfo;
 import cn.zhiyingyun.zone.exception.UnauthorizedException;
 import cn.zhiyingyun.zone.repository.UserRepository;

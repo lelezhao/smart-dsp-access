@@ -8,6 +8,14 @@ public class ComboBox {
 
   private String value;
 
+  public ComboBox() {
+  }
+
+  public ComboBox(String textValue) {
+    this.text = textValue;
+    this.value = textValue;
+  }
+
   public String getText() {
     return text;
   }

@@ -2,6 +2,7 @@ package cn.zhiyingyun.zone.service.impl;
 
 import cn.zhiyingyun.zone.common.BeanUtils;
 import cn.zhiyingyun.zone.common.CommonPage;
+import cn.zhiyingyun.zone.domain.DspBidHistory;
 import cn.zhiyingyun.zone.dto.BidHistoryDto;
 import cn.zhiyingyun.zone.dto.page.PageBidHistoryPageQueryDto;
 import cn.zhiyingyun.zone.repository.DspBidHistoryRepository;

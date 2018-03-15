@@ -2,6 +2,7 @@ package cn.zhiyingyun.zone.entity;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +30,7 @@ public class UpPlatRequest {
     public String tagid;
     public Banner banner;
     @JSONField(name = "native")
+    @JsonProperty(value = "native")
     public Native native$;
     public Map<Integer, List<Native>> vars_native;
     public AdWords adWords;
@@ -182,8 +184,8 @@ public class UpPlatRequest {
 
       @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
       public static class Size {
-        private Integer w;
-        private Integer h;
+        public Integer w;
+        public Integer h;
 
         public Size(Integer w, Integer h) {
           this.w = w;

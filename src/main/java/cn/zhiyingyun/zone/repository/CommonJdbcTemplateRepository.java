@@ -3,6 +3,7 @@ package cn.zhiyingyun.zone.repository;
 
 import cn.zhiyingyun.zone.common.AnalyseSqlMaker;
 import cn.zhiyingyun.zone.common.Constants;
+import cn.zhiyingyun.zone.domain.DspUser;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.Repository;

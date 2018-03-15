@@ -1,12 +1,12 @@
 package cn.zhiyingyun.zone.controller;
 
 import cn.zhiyingyun.zone.common.JsonResult;
-import cn.zhiyingyun.zone.domain.DspBidHistory;
 import cn.zhiyingyun.zone.domain.DspUser;
 import cn.zhiyingyun.zone.dto.RequstBuildDto;
 import cn.zhiyingyun.zone.entity.UpPlatRequest;
 import cn.zhiyingyun.zone.entity.UpPlatResponse;
 import cn.zhiyingyun.zone.service.IBuildRequestService;
+import cn.zhiyingyun.zone.service.ICheckResponseService;
 import cn.zhiyingyun.zone.service.IDspBidHistoryService;
 import cn.zhiyingyun.zone.service.IUserService;
 import com.alibaba.fastjson.JSONObject;
@@ -15,10 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
 import org.springframework.http.converter.StringHttpMessageConverter;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.Charset;
@@ -36,17 +33,26 @@ public class RequestController extends BaseController {
   IUserService userService;
   @Autowired
   IDspBidHistoryService dspBidHistoryService;
+  @Autowired
+  ICheckResponseService checkResponseService;
 
-  private static final List<String> bannerSlotTypes = Arrays.asList("s_t-banner,s_t-full,s_t-interstitial");
-  private static final List<String> nativeSlotTypes = Arrays.asList("s_t-feeds,s_t-focus,s_t-icon,s_t-imagewall");
+  private static final List<String> bannerSlotTypes = Arrays.asList("s_t-banner", "s_t-full", "s_t-interstitial");
+  private static final List<String> nativeSlotTypes = Arrays.asList("s_t-feeds", "s_t-focus", "s_t-icon", "s_t-imagewall");
   private static final List<String> videoSlotTypes = Arrays.asList("s_t-video");
+
+  private static final List<String> osTypes = Arrays.asList("o_t-android", "o_t-ios");
 
 
   StringHttpMessageConverter stringHttpMessageConverter = new StringHttpMessageConverter(Charset.forName("UTF-8"));
 
   private RestTemplate restTemplate = new RestTemplateBuilder().additionalMessageConverters(stringHttpMessageConverter).build();
 
-
+  /**
+   * 请求样例生成接口
+   *
+   * @param requstBuildDto 请求参数
+   * @return
+   */
   @PostMapping(value = "/build", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public JsonResult build(RequstBuildDto requstBuildDto) {
     //参数校验
@@ -54,8 +60,22 @@ public class RequestController extends BaseController {
       return renderError("参数不能为空！");
     }
 
-    if (StringUtils.isBlank(requstBuildDto.getSlotType())) {
+    String slotType = requstBuildDto.getSlotType();
+    String slotSize = requstBuildDto.getSlotSize();
+    String osType = requstBuildDto.getOsType();
+    Boolean isSupportDeeplink = requstBuildDto.getSupportDeeplink();
+    Boolean isSupportDownload = requstBuildDto.getSupportDownload();
+    Boolean isSecure = requstBuildDto.getSecure();
+
+    if (StringUtils.isBlank(slotType)) {
       return renderError("请选择广告位类型！");
+    }
+
+    if (StringUtils.isBlank(osType)) {
+      return renderError("请选择操作系统！");
+    }
+    if (!osTypes.contains(osType)) {
+      return renderError("请选择正确的操作系统！");
     }
 
     UpPlatRequest upPlatRequest = new UpPlatRequest();
@@ -64,19 +84,15 @@ public class RequestController extends BaseController {
 
     UpPlatRequest.Impression impression = null;
 
-    if (bannerSlotTypes.contains(requstBuildDto.getSlotType())) {
-      impression = buildRequestService.buildBannerImp(requstBuildDto.getSupportDeeplink(), requstBuildDto.getSupportDownload(), requstBuildDto.getSecure());
+    if (bannerSlotTypes.contains(slotType)) {
+      impression = buildRequestService.buildBannerImp(slotType, isSupportDeeplink, isSupportDownload, isSecure);
     } else if (nativeSlotTypes.contains(requstBuildDto.getSlotType())) {
-      impression = buildRequestService.buildNativeImp(requstBuildDto.getSupportDeeplink(), requstBuildDto.getSupportDownload(), requstBuildDto.getSecure());
+      impression = buildRequestService.buildNativeImp(slotType, slotSize, isSupportDeeplink, isSupportDownload, isSecure);
     } else if (videoSlotTypes.contains(requstBuildDto.getSlotType())) {
-      impression = buildRequestService.buildVideoImp(requstBuildDto.getSupportDeeplink(), requstBuildDto.getSupportDownload(), requstBuildDto.getSecure());
+      impression = buildRequestService.buildVideoImp(slotType, slotSize, isSupportDeeplink, isSupportDownload, isSecure);
     }
-    if(impression==null){
+    if (impression == null) {
       return renderError("impression构建失败");
-    }
-
-    if(StringUtils.isBlank(requstBuildDto.getOsType())){
-      return renderError("请选择操作系统！");
     }
 
     UpPlatRequest.Device device = buildRequestService.buildDevice(requstBuildDto.getOsType());
@@ -84,6 +100,20 @@ public class RequestController extends BaseController {
     UpPlatRequest.App app = buildRequestService.buildApp();
 
     UpPlatRequest.User user = buildRequestService.buildUser();
+
+    if (StringUtils.isBlank(requstBuildDto.getSellType())) {
+      return renderError("请选择交易模式！");
+    }
+
+    if (requstBuildDto.getSellType().equals("s_t-pdb")) {
+      if (StringUtils.isBlank(requstBuildDto.getDealId()) || requstBuildDto.getDealPrice() == null) {
+        return renderError("请填写dealId或dealPrice");
+      }
+
+      UpPlatRequest.Impression.Pmp pmp = buildRequestService.buildPmp(requstBuildDto.getDealId(), requstBuildDto.getDealPrice());
+
+      impression.pmp = pmp;
+    }
 
     upPlatRequest.imp = Arrays.asList(impression);
     upPlatRequest.device = device;
@@ -93,13 +123,27 @@ public class RequestController extends BaseController {
     return renderSuccess(upPlatRequest);
   }
 
-
+  /**
+   * 竞价接口
+   *
+   * @param upPlatRequest 请求样例
+   * @return
+   */
   @PostMapping(value = "/bid", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  public JsonResult bid(@RequestBody UpPlatRequest upPlatRequest) {
+  public JsonResult bid(@RequestBody UpPlatRequest upPlatRequest, @RequestHeader String bidUrl) {
     //参数校验
     DspUser dspUser = userService.findOne(getUserId());
 
     String requestUrl = dspUser.getRequestUrl();
+
+    if (StringUtils.isBlank(requestUrl)) {
+      return renderError("竞价接口地址为空！");
+    }
+
+    if (StringUtils.isNotBlank(bidUrl)) {
+      requestUrl = bidUrl;
+    }
+
     MediaType type = MediaType.APPLICATION_JSON_UTF8;
 
     HttpHeaders httpHeaders = new HttpHeaders();
@@ -116,7 +160,7 @@ public class RequestController extends BaseController {
     ResponseEntity<String> responseEntity = restTemplate.exchange(requestUrl, HttpMethod.POST, requstEntity, String.class);
 
 
-    DspBidHistory bidHistory = new DspBidHistory();
+/*    DspBidHistory bidHistory = new DspBidHistory();
     createResourceInit(bidHistory);
     bidHistory.setRequestUrl(requestUrl);
     bidHistory.setRequestBody(JSONObject.toJSONString(upPlatRequest));
@@ -126,11 +170,12 @@ public class RequestController extends BaseController {
     bidHistory.setResponseCode(String.valueOf(responseEntity.getStatusCode().value()));
     bidHistory.setResponseBody(responseEntity.getBody());
 
-    dspBidHistoryService.save(bidHistory);
+    dspBidHistoryService.save(bidHistory);*/
 
     if (StringUtils.isBlank(responseEntity.getBody())) {
       return renderError("竞价响应内容为空！");
     }
+
 
     UpPlatResponse upPlatResponse = JSONObject.parseObject(responseEntity.getBody(), UpPlatResponse.class);
 
